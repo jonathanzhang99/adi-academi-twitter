@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Homepage Template{% endblock %}
+{% block page_content %}
+    <h1>Hello {% if name %} {{ name }} {% else %}Stranger{% endif %}</h1>
+    {% if known %} <p>Welcome!</p>
+    {% else %} <p>Welcome back!</p>
+    {% endif %}
+    {{ wtf.quick_form(form) }}
+{% endblock %}
