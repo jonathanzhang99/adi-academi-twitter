@@ -1,6 +1,7 @@
-from mongoengine import StringField, EmailField
+from mongoengine import StringField, EmailField, DateTimeField, ReferenceField, ListField, CASCADE
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 from . import db, login_manager
 
 
@@ -27,3 +28,16 @@ class User(db.Document, UserMixin):
 
     def __repr__(self):
         return "<User {}>".format(self.username)
+
+
+class Comment(db.Document):
+    text = StringField(required=True, max_length=100)
+    timestamp = DateTimeField(required=True, default=datetime.now())
+    author = ReferenceField(User, reverse_delete_rule=CASCADE)
+
+
+class Post(db.Document):
+    body = StringField(required=True, max_length=140)
+    timestamp = DateTimeField(required=True, default=datetime.utcnow())
+    author = ReferenceField(User, reverse_delete_rule=CASCADE)
+    comments = ListField(ReferenceField(Comment))

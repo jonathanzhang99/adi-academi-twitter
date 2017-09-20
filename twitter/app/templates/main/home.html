@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+{% block page_content %}
+{% if not current_user.is_authenticated %}
+    <div>
+    <h1>Welcome to ADI Twitter! Login <a href="{{ url_for('auth.login') }}">here</a></h1>
+    </div>
+{% else %}
+    <div class="page-header">
+    <h1>Hello {{ current_user.username }}</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+    {% include 'posts.html' %}
+{% endif %}
+{% endblock %}

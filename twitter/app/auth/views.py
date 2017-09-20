@@ -3,6 +3,7 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from forms import LoginForm, RegistrationForm
 from ..models import User
+from ..mail import send_mail
 
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -14,6 +15,7 @@ def register():
         user.password = form.password.data
         user.save()
         flash("Successfully created account. Please login")
+        send_mail('New account created!', 'auth/mail/new_user', user.email, user=user)
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
@@ -25,7 +27,7 @@ def login():
         user = User.objects(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):
             login_user(user, form.remember_me.data)
-            return redirect(request.args.get('next') or url_for('routes.home'))
+            return redirect(request.args.get('next') or url_for('main.home'))
         flash('Invalid username or password')
     return render_template('auth/login.html', form=form)
 
@@ -35,4 +37,4 @@ def login():
 def logout():
     logout_user()
     flash('You have been logged out')
-    return redirect(url_for('routes.home'))
+    return redirect(url_for('main.home'))
